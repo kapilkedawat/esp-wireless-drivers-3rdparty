@@ -57,7 +57,8 @@ typedef enum {
 
 /* wifi_appie_t is in rom code and can't be changed anymore, use wifi_appie_ram_t for new app IEs */
 typedef enum {
-    WIFI_APPIE_AUTH = WIFI_APPIE_MAX,
+    WIFI_APPIE_BEACON_PROBE_RESP = WIFI_APPIE_MAX,
+    WIFI_APPIE_AUTH,
     WIFI_APPIE_RAM_MAX,
 } wifi_appie_ram_t;
 
@@ -122,13 +123,13 @@ struct wpa_funcs {
     void (*wpa_sta_disconnected_cb)(uint8_t reason_code);
     int (*wpa_sta_rx_eapol)(uint8_t *src_addr, uint8_t *buf, uint32_t len);
     bool (*wpa_sta_in_4way_handshake)(void);
-    void *(*wpa_ap_init)(void);
-    bool (*wpa_ap_deinit)(void *data);
-    bool (*wpa_ap_join)(void **sm, uint8_t *bssid, uint8_t *wpa_ie, uint8_t wpa_ie_len);
-    bool (*wpa_ap_remove)(void *sm);
+    int *(*wpa_ap_init)(void);
+    int (*wpa_ap_deinit)(void *data);
+    int (*wpa_ap_join)(uint8_t *bssid, uint8_t *wpa_ie, uint8_t wpa_ie_len);
+    int (*wpa_ap_remove)(uint8_t *addr);
     uint8_t *(*wpa_ap_get_wpa_ie)(uint8_t *len);
-    bool (*wpa_ap_rx_eapol)(void *hapd_data, void *sm, uint8_t *data, size_t data_len);
-    void (*wpa_ap_get_peer_spp_msg)(void *sm, bool *spp_cap, bool *spp_req);
+    int (*wpa_ap_rx_eapol)(uint8_t *addr, uint8_t *data, size_t data_len);
+    int (*wpa_ap_get_peer_spp_msg)(void *sm, bool *spp_cap, bool *spp_req);
     char *(*wpa_config_parse_string)(const char *value, size_t *len);
     int (*wpa_parse_wpa_ie)(const uint8_t *wpa_ie, size_t wpa_ie_len, wifi_wpa_ie_t *data);
     int (*wpa_config_bss)(uint8_t *bssid);
